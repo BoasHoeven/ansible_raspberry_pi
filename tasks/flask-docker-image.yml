@@ -5,10 +5,8 @@
     tag: "{{ item.tag }}"
     source: build
     build:
-      path: "{{ build_root }}/{{ item.directory }}"
+      path: "{{ playbook_dir }}/{{ item.directory }}"
       pull: false
-    vars:
-      build_root: "{{cmd.stdout}}"
     state: present
   with_items:
     - { name: flask, tag: latest, directory: www }
