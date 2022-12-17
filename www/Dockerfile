@@ -1,3 +1,7 @@
+# A simple Flask app container.
+FROM geerlingguy/docker-ubuntu2004-ansible
+MAINTAINER Jeff Geerling <geerlingguy@mac.com>
+
 # Install Flask app dependencies.
 RUN apt-get update
 RUN apt-get install -y python3-pip
