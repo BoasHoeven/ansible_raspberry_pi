@@ -3,7 +3,7 @@ FROM geerlingguy/docker-ubuntu2004-ansible
 MAINTAINER Jeff Geerling <geerlingguy@mac.com>
 
 # Install Flask app dependencies.
-RUN apt-update && apt-upgrade -y
+RUN apt-get update && apt-get upgrade -y
 RUN apt-get upgrade
 RUN apt-get install -y python3-pip
 RUN apt-get install -y wget
