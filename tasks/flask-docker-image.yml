@@ -7,16 +7,11 @@
     build:
       path: "{{ build_root }}/{{ item.directory }}"
       pull: false
+    vars:
+      build_root: "{{cmd.stdout}}"
     state: present
   with_items:
     - { name: flask, tag: latest, directory: www }
-
-# Data containers don't need to be running to be utilized.
-- name: Run a Data container.
-  docker_container:
-    image: data:latest
-    name: data
-    state: present
 
 - name: Run a Flask container.
   docker_container:
@@ -24,4 +19,4 @@
     name: www
     state: started
     command: python3 /opt/www/api.py
-    ports: "80:80"
+    ports: "5000:5000"
