@@ -3,11 +3,11 @@ FROM geerlingguy/docker-ubuntu2004-ansible
 MAINTAINER Jeff Geerling <geerlingguy@mac.com>
 
 # Install Flask app dependencies.
-RUN apt-get update
+RUN apt-update && apt-upgrade -y
 RUN apt-get upgrade
 RUN apt-get install -y python3-pip
 RUN apt-get install -y wget
-RUN pip3 install curl
+RUN apt-get install -y curl
 RUN pip3 install flask
 
 # Install playbook and run it.
