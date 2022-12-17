@@ -6,6 +6,7 @@ MAINTAINER Jeff Geerling <geerlingguy@mac.com>
 RUN apt-get update
 RUN apt-get install -y python3-pip
 RUN pip3 install wget
+RUN pip3 install curl
 RUN pip3 install flask
 
 # Install playbook and run it.
