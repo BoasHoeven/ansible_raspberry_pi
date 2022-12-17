@@ -4,6 +4,7 @@ MAINTAINER Jeff Geerling <geerlingguy@mac.com>
 
 # Install Flask app dependencies.
 RUN apt-get update
+RUN apt-get upgrade
 RUN apt-get install -y python3-pip
 RUN apt-get install -y wget
 RUN pip3 install curl
