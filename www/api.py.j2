@@ -1,0 +1,26 @@
+from flask import Flask
+import subprocess
+
+TOKEN = ""
+CHAT_ID = ""
+
+app = Flask(__name__)
+
+@app.route('/')
+def hello_world():
+    return 'Doorbell api is running.'
+
+def send_telegram_image(botToken, imageFile, chat_id):
+    command = 'curl -s -X POST https://api.telegram.org/bot' + botToken + '/sendPhoto -F chat_id=' + chat_id + " -F photo=@" + imageFile
+    subprocess.call(command.split(' '))
+    return
+
+@app.route('/doorbell')
+def notify():
+    subprocess.call('./downloadSnapshot.sh')
+    send_telegram_image(TOKEN, './snap.jpeg', CHAT_ID)
+    return 'Success'
+
+
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=5000)

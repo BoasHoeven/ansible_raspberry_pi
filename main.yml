@@ -33,3 +33,6 @@
     - name: Set up Pi Hole.
       ansible.builtin.import_tasks: tasks/pi-hole.yml
       when: pihole_enable
+    
+    - import_tasks: flask-docker-image.yml
+    - import_tasks: flask-setup.yml
