@@ -9,7 +9,6 @@
       pull: false
     state: present
   with_items:
-    - { name: data, tag: latest, directory: data }
     - { name: flask, tag: latest, directory: www }
 
 # Data containers don't need to be running to be utilized.
