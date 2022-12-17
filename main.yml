@@ -1,5 +1,5 @@
 ---
-- hosts: internet_pi
+- hosts: automated_pi
   become: true
 
   pre_tasks:
