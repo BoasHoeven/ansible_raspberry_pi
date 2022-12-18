@@ -17,9 +17,3 @@
         src: /etc/ansible/api.py.j2
         dest: /opt/www/api.py
         mode: 0755
-
-    - name: Copy shell script into place.
-      template:
-        src: /etc/ansible/downloadSnapshot.sh
-        dest: /opt/www/downloadSnapshot.sh
-        mode: 0755

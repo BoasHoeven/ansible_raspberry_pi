@@ -17,7 +17,7 @@ def send_telegram_image(botToken, imageFile, chat_id):
 
 @app.route('/doorbell')
 def notify():
-    subprocess.call('/opt/www/downloadSnapshot.sh')
+    subprocess.call(['wget', '-O', './snap.jpeg', '192.168.192.204/snap.jpeg'])
     send_telegram_image(TOKEN, './snap.jpeg', CHAT_ID)
     return 'Success'
 
