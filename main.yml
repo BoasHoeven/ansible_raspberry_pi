@@ -34,5 +34,6 @@
       ansible.builtin.import_tasks: tasks/pi-hole.yml
       when: pihole_enable
     
-    - import_tasks: tasks/flask-docker-image.yml
-    - import_tasks: tasks/flask-setup.yml
+    - name: Setup Flask Api.
+      ansible.builtin.import_tasks: tasks/flask-api.yml
+      when: flask_api

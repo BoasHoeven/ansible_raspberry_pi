@@ -9,6 +9,7 @@ domain_pihole: 'pihole'          # to access pihole via: http://pihole.home.loca
 
 # Pi-hole configuration.
 pihole_enable: true
+flask_api: true
 pihole_hostname: pihole
 pihole_timezone: Europe/Amsterdam
 pihole_password: "change-this-password"
