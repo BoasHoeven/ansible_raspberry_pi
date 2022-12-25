@@ -7,6 +7,7 @@ RUN apt-get update && apt-get upgrade -y
 RUN apt-get install -y python3-pip
 RUN apt-get install -y wget
 RUN apt-get install -y curl
+RUN apt-get install -y ffmpeg
 RUN pip3 install flask
 
 # Install playbook and run it.

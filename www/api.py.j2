@@ -1,24 +1,66 @@
 from flask import Flask
+from string import Template
+import os
+import time
 import subprocess
 
 TOKEN = ""
 CHAT_ID = ""
+AMOUNT_OF_PHOTOS = 9
+SLEEP = 3/AMOUNT_OF_PHOTOS
+FRAMERATE = AMOUNT_OF_PHOTOS/3
+
+VIDEO = True
 
 app = Flask(__name__)
 
 @app.route('/')
-def hello_world():
-    return 'Doorbell api is running.'
+def index():
+    return 'Doorbell api is up'
+
+def send_telegram_video(botToken, videoFile, chat_id):
+    command = 'curl -s -X POST https://api.telegram.org/bot' + botToken + '/sendVideo -F chat_id=' + chat_id + " -F video=@" + videoFile
+    subprocess.call(command.split(' '))
+    return
 
 def send_telegram_image(botToken, imageFile, chat_id):
     command = 'curl -s -X POST https://api.telegram.org/bot' + botToken + '/sendPhoto -F chat_id=' + chat_id + " -F photo=@" + imageFile
     subprocess.call(command.split(' '))
     return
 
+def make_photo():
+    subprocess.call(['wget', '-O', './snap.jpeg', '192.168.192.200/snap.jpeg'])
+
+def make_photos():
+    for x in range(0, AMOUNT_OF_PHOTOS):
+        photo_template = Template('snap_$number.jpeg')
+        start_time = time.time()
+        subprocess.call(['wget', '-O', photo_template.substitute(number=x), '192.168.192.200/snap.jpeg'])
+        elapsed_time = time.time() - start_time
+        newSleep = SLEEP - elapsed_time
+        if newSleep > 0:
+            time.sleep(newSleep)
+
+def create_video():
+    video_template = Template("ffmpeg -r $framerate -i snap_%01d.jpeg -an -c:v libx264 -crf 26 -vf scale=640:-1 -y video.mp4")
+    os.system(video_template.substitute(framerate=FRAMERATE))
+
+def video():
+    make_photos()
+    create_video()
+    send_telegram_video(TOKEN, './video.mp4', CHAT_ID)
+
+def photo():
+    make_photo()
+    send_telegram_image(TOKEN, './snap.jpeg', CHAT_ID)
+
 @app.route('/doorbell')
 def notify():
-    subprocess.call(['wget', '-O', './snap.jpeg', '192.168.192.200/snap.jpeg'])
-    send_telegram_image(TOKEN, './snap.jpeg', CHAT_ID)
+    if VIDEO:
+        video()
+    else:
+        photo()
+  
     return 'Success'
 
 if __name__ == "__main__":
