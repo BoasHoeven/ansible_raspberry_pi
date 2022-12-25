@@ -42,7 +42,7 @@ def make_photos():
             time.sleep(newSleep)
 
 def create_video():
-    video_template = Template("ffmpeg -r $framerate -i snap_%01d.jpeg -an -c:v libx264 -crf 26 -y video.mp4")
+    video_template = Template("ffmpeg -r $framerate -i snap_%01d.jpeg -an -c:v libx264 -y video.mp4")
     os.system(video_template.substitute(framerate=FRAMERATE))
 
 def video():
