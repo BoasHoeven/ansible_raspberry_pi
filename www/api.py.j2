@@ -33,7 +33,7 @@ def make_photo():
 
 def make_photos():
     for x in range(0, AMOUNT_OF_PHOTOS):
-        photo_template = Template('snap_$number.jpeg')
+        photo_template = Template('vid_$number.jpeg')
         start_time = time.time()
         subprocess.call(['wget', '-O', photo_template.substitute(number=x), '192.168.192.200/snap.jpeg'])
         elapsed_time = time.time() - start_time
@@ -42,7 +42,7 @@ def make_photos():
             time.sleep(newSleep)
 
 def create_video():
-    video_template = Template("ffmpeg -r $framerate -i snap_%01d.jpeg -an -c:v libx264 -y video.mp4")
+    video_template = Template("ffmpeg -r $framerate -i vid_%01d.jpeg -an -c:v libx264 -y video.mp4")
     os.system(video_template.substitute(framerate=FRAMERATE))
 
 def video():
