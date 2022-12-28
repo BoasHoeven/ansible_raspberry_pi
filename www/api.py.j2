@@ -10,7 +10,7 @@ AMOUNT_OF_PHOTOS = 9
 SLEEP = 3/AMOUNT_OF_PHOTOS
 FRAMERATE = AMOUNT_OF_PHOTOS/3
 
-VIDEO = True
+SEND_VIDEO_NOTIFICATION = True
 
 app = Flask(__name__)
 
@@ -42,7 +42,7 @@ def make_photos():
             time.sleep(newSleep)
 
 def create_video():
-    video_template = Template("ffmpeg -r $framerate -i vid_%01d.jpeg -b 3500k -an -c:v libx264 -y video.mp4")
+    video_template = Template("ffmpeg -r $framerate -i vid_%01d.jpeg -b:v 500k -preset ultrafast -threads auto -an -c:v libx264 -y video.mp4")
     os.system(video_template.substitute(framerate=FRAMERATE))
 
 def video():
@@ -56,7 +56,8 @@ def photo():
 
 @app.route('/doorbell')
 def notify():
-    if VIDEO:
+    if SEND_VIDEO_NOTIFICATION:
+        photo()
         video()
     else:
         photo()
