@@ -18,20 +18,23 @@ app = Flask(__name__)
 def index():
     return 'Doorbell api is up'
 
-def send_telegram_video(botToken, videoFile, chat_id):
-    command = 'curl -s -X POST https://api.telegram.org/bot' + botToken + '/sendVideo -F chat_id=' + chat_id + " -F video=@" + videoFile
-    subprocess.call(command.split(' '))
-    return
+def send_telegram_media(bot_token, media_file, chat_id, media_type):
+    endpoint_map = {
+        "video": "sendVideo",
+        "photo": "sendPhoto"
+    }
+    if media_type not in endpoint_map:
+        return False
 
-def send_telegram_image(botToken, imageFile, chat_id):
-    command = 'curl -s -X POST https://api.telegram.org/bot' + botToken + '/sendPhoto -F chat_id=' + chat_id + " -F photo=@" + imageFile
-    subprocess.call(command.split(' '))
-    return
+    endpoint = endpoint_map[media_type]
+    command = f'curl -s -X POST https://api.telegram.org/bot{bot_token}/{endpoint} -F chat_id={chat_id} -F {media_type}=@{media_file}'
+    result = subprocess.run(command.split(' '), stderr=subprocess.PIPE)
+    return "Bad Request" in result.stderr.decode("utf-8")
 
-def make_photo():
+def download_photo():
     subprocess.call(['wget', '-O', './snap.jpeg', '192.168.192.200/snap.jpeg'])
 
-def make_photos():
+def download_photos():
     for x in range(0, AMOUNT_OF_PHOTOS):
         photo_template = Template('vid_$number.jpeg')
         start_time = time.time()
@@ -41,27 +44,34 @@ def make_photos():
         if newSleep > 0:
             time.sleep(newSleep)
 
-def create_video():
-    video_template = Template("ffmpeg -r $framerate -i vid_%01d.jpeg -b:v 500k -preset ultrafast -threads auto -an -c:v libx264 -y video.mp4")
+def turn_photos_into_video():
+    video_template = Template("ffmpeg -r $framerate -i vid_%01d.jpeg -b:v 500k -preset ultrafast -an -c:v libx264 -threads 4 -pix_fmt yuv420p -y video.mp4")
     os.system(video_template.substitute(framerate=FRAMERATE))
 
-def video():
-    make_photos()
-    create_video()
-    send_telegram_video(TOKEN, './video.mp4', CHAT_ID)
+def send_telegram_video():
+    download_photos()
+    turn_photos_into_video()
+    return send_telegram_media(TOKEN, './video.mp4', CHAT_ID, 'video')
 
-def photo():
-    make_photo()
-    send_telegram_image(TOKEN, './snap.jpeg', CHAT_ID)
+def send_telegram_photo():
+    download_photo()
+    return send_telegram_media(TOKEN, './snap.jpeg', CHAT_ID, 'photo')
 
 @app.route('/doorbell')
 def notify():
     if SEND_VIDEO_NOTIFICATION:
-        photo()
-        video()
+        success = send_telegram_photo()
+        if (not success):
+            return "Failed to send photo"
+        
+        success = send_telegram_video()
+        if (not success):
+            return "Failed to send video"
     else:
-        photo()
-  
+        success = send_telegram_photo()
+        if (not success):
+            return "Failed to send photo"
+      
     return 'Success'
 
 if __name__ == "__main__":
